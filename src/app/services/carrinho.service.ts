@@ -12,7 +12,7 @@ export class CarrinhoService {
 
   http = inject(HttpClient);
 
-  API = environment.SERVIDOR+"/api/carrinho";
+  API = environment.SERVIDOR+"carrinho";
   
   constructor() { }
 

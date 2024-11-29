@@ -13,7 +13,7 @@ export class ItemCarrinhoService {
 
   http = inject(HttpClient);
 
-  API = environment.SERVIDOR+"/api/itemcarrinho";
+  API = environment.SERVIDOR+"itemcarrinho";
 
   constructor() { }
 
@@ -33,7 +33,7 @@ export class ItemCarrinhoService {
     return this.http.put<string>(this.API + "/update/"+id, itemCarrinho, {responseType: 'text' as 'json'});
   }
 
-  getCarrinhoByUser(idUsuario: number): Observable<Carrinho>{
+  getCarrinhoByUser(idUsuario: string): Observable<Carrinho>{
     return this.http.get<Carrinho>(this.API+"/getCarrinhoByUser?idUsuario="+idUsuario);
   }
 }

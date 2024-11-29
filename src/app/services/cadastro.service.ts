@@ -11,7 +11,7 @@ export class CadastroService {
 
   http = inject(HttpClient);
 
-  API = environment.SERVIDOR+"/api/usuario";
+  API = environment.SERVIDOR+"usuario";
 
   constructor() { }
 

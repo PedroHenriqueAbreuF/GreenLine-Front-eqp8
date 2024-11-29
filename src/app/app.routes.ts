@@ -4,6 +4,7 @@ import { AdminLayoutComponent } from './components/layout/admin/admin-layout/adm
 import { loginguardGuard } from './auth/loginguard.guard';
 
 
+
 export const routes: Routes = [
     {
         path: '', component: MainLayoutComponent, children: [
@@ -31,7 +32,9 @@ export const routes: Routes = [
                 path: 'produto',
                 loadComponent: () => import('./components/produtos/produtos.component').then(c => c.ProdutosComponent),
                 title: 'GreenLine | Produtos'
-            }
+            },
+
+            
         ]
     },
 
@@ -94,5 +97,14 @@ export const routes: Routes = [
             loadComponent: () => import('./components/listagem-clientes/listagem-clientes.component').then(c => c.ListagemClientesComponent),
             title:'GreenLine | Listagem de Clientes'
         },
+        { 
+            path: 'audit-logs', 
+            loadComponent: () => import('./components/layout/admin/logs/logs.component').then(c => c.LogsComponent),
+            title: 'Admin | Logs'
+        }
+
+
+
+    
     ]}
 ];

@@ -11,7 +11,7 @@ export class FornecedorService {
 
   http = inject(HttpClient);
 
-  API = environment.SERVIDOR+"/api/fornecedor";
+  API = environment.SERVIDOR+"fornecedor";
   
   constructor() { }
 

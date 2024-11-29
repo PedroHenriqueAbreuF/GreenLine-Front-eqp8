@@ -11,7 +11,7 @@ export class ClienteService {
 
   http = inject(HttpClient);
 
-  API = environment.SERVIDOR+"/api/cliente";
+  API = environment.SERVIDOR+"cliente";
 
   constructor() { }
 

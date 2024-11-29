@@ -11,7 +11,7 @@ export class CategoriaService {
 
   http = inject(HttpClient);
 
-  API = environment.SERVIDOR+"/api/categoria";
+  API = environment.SERVIDOR+"categoria";
   
   constructor() { }
 

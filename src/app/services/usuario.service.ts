@@ -8,7 +8,7 @@ import { environment } from '../../environments/environment';
   providedIn: 'root'
 })
 export class UsuarioService {
-   API_USUARIO = environment.SERVIDOR+'/api/cliente';
+   API_USUARIO = environment.SERVIDOR+'cliente';
 
    http = inject(HttpClient);
 

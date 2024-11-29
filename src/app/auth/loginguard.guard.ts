@@ -7,7 +7,7 @@ export const loginguardGuard: CanActivateFn = (route, state) => {
   let loginService = inject(LoginService);
   let router = inject(Router);
 
-  if(loginService.getUsuarioLogado().role != "ADMIN" && state.url.includes('/admin')){
+  if(loginService.getRole() != "ADMIN" && state.url.includes('/admin')){
     alert('Voce nao tem permissao');
     router.navigate(['/home']);
     return false;

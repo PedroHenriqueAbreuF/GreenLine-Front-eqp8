@@ -1,20 +1,21 @@
 import { Component, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { MdbCollapseModule } from 'mdb-angular-ui-kit/collapse';
 import { MdbDropdownModule } from 'mdb-angular-ui-kit/dropdown';
 import { LoginService } from '../../../auth/login.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [MdbCollapseModule, MdbDropdownModule, RouterLink],
+  imports: [CommonModule, MdbCollapseModule, MdbDropdownModule, RouterLink],
   templateUrl: './navbar.component.html',
-  styleUrl: './navbar.component.scss'
+  styleUrls: ['./navbar.component.scss']
 })
-
 export class NavbarComponent {
 
-  loginservice = inject(LoginService);
+  loginService = inject(LoginService);
+  router = inject(Router);
 
   actionsNav = [
     {
@@ -29,7 +30,7 @@ export class NavbarComponent {
       url: 'produto',
       isExternal: false
     }
-  ]
+  ];
 
   actionsCategoria = [
     {
@@ -47,5 +48,21 @@ export class NavbarComponent {
       url: '#',
       isExternal: false
     }
-  ]
+  ];
+
+  // Verifica se o usuário está logado
+  isLoggedIn(): boolean {
+    return this.loginService.isLoggedIn();
+  }
+
+  // Obtém o papel do usuário
+  getUserRole(): string | null {
+    return this.loginService.getRole();
+  }
+
+  // Executa o logout e redireciona para a página de login
+  logout(): void {
+    this.loginService.removerToken();
+    this.router.navigate(['login']);
+  }
 }

@@ -30,8 +30,9 @@ export class CarrinhoCardComponent {
 
   save(){
     
-    if (this.loginService.getUsuarioLogado() != null){
-      this.itemCarrinhoService.getCarrinhoByUser(this.loginService.getUsuarioLogado().idUsuario).subscribe({
+    const userId = this.loginService.getUserIdFromToken(); // Obtém o ID do usuário a partir do token decodificado
+    if (userId != null) {
+      this.itemCarrinhoService.getCarrinhoByUser(userId).subscribe({
         next: carrinho => {
           this.carrinhoUser = carrinho;
           this.finalizarVenda();

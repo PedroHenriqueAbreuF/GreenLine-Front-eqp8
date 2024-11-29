@@ -11,7 +11,7 @@ export class ProdutosService {
 
   http = inject(HttpClient);
 
-  API = environment.SERVIDOR+"/api/produto";
+  API = environment.SERVIDOR+"produto";
 
 
   constructor() { }

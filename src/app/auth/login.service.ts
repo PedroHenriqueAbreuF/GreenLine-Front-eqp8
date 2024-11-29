@@ -1,10 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { jwtDecode, JwtPayload } from "jwt-decode";
-import { Usuario } from './usuario';
-import { Autenticador } from './autenticador';
-import { Login } from '../models/login';
+import { catchError, tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -13,53 +11,76 @@ import { environment } from '../../environments/environment';
 export class LoginService {
 
   http = inject(HttpClient);
-  API = environment.SERVIDOR+"/api/usuario";
-
+  API = environment.SERVIDOR + "usuario";
 
   constructor() { }
 
-
-  login(loginData: Autenticador): Observable<string> {
-    console.log('Dados de login:', loginData);
-    return this.http.post<string>(this.API+"/login", loginData, {responseType: 'text' as 'json'}); // Envie o objeto Login completo no corpo da solicitação
+  login(loginData: any, ): Observable<any> {
+    return this.http.post(`${this.API}/login`, {
+      clientId: 'greenline-backend',
+      grantType: 'password',
+      username: loginData.username,
+      password: loginData.password
+    }).pipe(
+      tap((response: any) => {
+        console.log('Resposta do servidor:', response);
+        if (response.access_token) {
+          console.log('Token recebido:', response.access_token);
+          this.addToken(response.access_token);
+        } else {
+          console.error('Token não encontrado na resposta.');
+        }
+      }),
+      catchError((error) => {
+        console.error('Erro ao fazer login:', error);
+        return throwError(() => new Error('Falha ao fazer login, tente novamente.'));
+      })
+    );
   }
 
-  findByLoginId(idLoginLogado: number): Observable<Login>{
-    return this.http.get<Login>(this.API+"/findByLoginId/"+idLoginLogado);
-  }
-
-
-  addToken(token: string) {
-    localStorage.setItem('token', token);
+  addToken(token: string): void {
+    if (token) {
+      localStorage.setItem('token', token);
+      console.log('Token Salvo:', token); // Log para confirmação
+    } else {
+      console.error('Tentativa de salvar um token indefinido');
+    }
   }
 
   removerToken() {
     localStorage.removeItem('token');
   }
 
-  getToken() {
+  getToken(): string | null {
     return localStorage.getItem('token');
   }
 
-  jwtDecode() {
-    let token = this.getToken();
+  isLoggedIn(): boolean {
+    return !!this.getToken(); // Retorna `true` se o token estiver presente
+  }
+
+  getRole(): string | null {
+    const token = this.getToken();
     if (token) {
-      return jwtDecode<JwtPayload>(token);
+      const decodedToken: any = jwtDecode(token);
+      // Acessa o papel do usuário em "resource_access.greenline-backend.roles"
+      const roles = decodedToken.resource_access?.['greenline-backend']?.roles || [];
+      return roles.length > 0 ? roles[0] : null;
     }
-    return "";
+    return null;
   }
 
-  hasPermission(role: string) {
-    let user = this.jwtDecode() as Login;
-    if (user.role == role)
-      return true;
-    else
-      return false;
+  getUserIdFromToken(): string | null {
+    const token = this.getToken();
+    if (token) {
+      const decoded: any = jwtDecode(token);
+      return decoded?.sub || null; // Utiliza o campo 'sub' como o ID do usuário
+    }
+    return null;
   }
 
-  getUsuarioLogado(){
-    return this.jwtDecode() as Login;
+  hasPermission(role: string): boolean {
+    const userRole = this.getRole();
+    return userRole === role;
   }
-
-
 }

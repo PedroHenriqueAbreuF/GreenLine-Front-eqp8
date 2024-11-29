@@ -37,31 +37,32 @@ export class CarrinhoComponent {
 
 
   listCarrinhoDoUser() {
-    if (this.loginService.getUsuarioLogado().idUsuario == null) {
-        Swal.fire({
+    const userID = this.loginService.getUserIdFromToken(); // Corrigido para chamar o método com `()`
+
+    if (userID == null) {
+      Swal.fire({
         title: 'Erro',
         text: 'Para acessar o carrinho deve estar logado',
         icon: 'warning',
         confirmButtonText: 'Login',
         showCancelButton: true,
-        cancelButtonText: 'cancelar',
+        cancelButtonText: 'Cancelar',
       }).then((result) => {
         if (result.isConfirmed) {
           this.router.navigate(['login']);
         }
       });
-    } else
-      this.itemCarrinhoService.getCarrinhoByUser(this.loginService.getUsuarioLogado().idUsuario).subscribe({
+    } else {
+      this.itemCarrinhoService.getCarrinhoByUser(userID).subscribe({
         next: carrinho => {
           this.carrinhoUser = carrinho;
-
           this.total = 0;
 
-          if (carrinho != null)
+          if (carrinho != null) {
             for (let i = 0; i < carrinho.itemCarrinho.length; i++) {
               this.total += (carrinho.itemCarrinho[i].valorUnitario * carrinho.itemCarrinho[i].quantProd);
             }
-
+          }
         },
         error: erro => {
           Swal.fire({
@@ -71,8 +72,8 @@ export class CarrinhoComponent {
             confirmButtonText: 'OK',
           });
         }
-
       });
+    }
   }
 
 

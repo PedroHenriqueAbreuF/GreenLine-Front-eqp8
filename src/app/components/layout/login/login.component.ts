@@ -1,44 +1,38 @@
 import { Component, inject } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { Autenticador } from '../../../auth/autenticador';
 import { LoginService } from '../../../auth/login.service';
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
   standalone: true,
-  imports: [FormsModule, RouterLink] 
+  imports: [FormsModule]
 })
-
 export class LoginComponent {
-  loginData: Autenticador = new Autenticador() // Certifique-se de que o modelo Usuario está importado corretamente
+  loginData: Autenticador = new Autenticador();
   erroLogin: boolean = false;
-  
 
-  constructor(private loginService: LoginService, public router: Router) {
-    loginService.removerToken();
+  constructor(private loginService: LoginService, private router: Router) {
+    loginService.removerToken(); // Remove o token anterior ao iniciar o login
   }
 
   logar() {
     this.loginService.login(this.loginData).subscribe({
-      next: token => {
-        console.log(token);
+      next: response => {
         Swal.fire({
           title: 'Bem vindo',
           icon: 'success',
           confirmButtonText: 'Ok',
-        });      
-      if(token){
-        this.loginService.addToken(token);
-      }
+        });
 
-
-            //obs: verificar
-      this.router.navigate(['']);
+        this.loginService.addToken(response.access_token); // Salva o token no serviço de login
+        this.router.navigate(['home']); // Redireciona para a página inicial ou desejada
       },
-      error: error => {
+      error: () => {
         Swal.fire({
           title: 'Ocorreu um erro, login inexistente',
           icon: 'error',
@@ -46,6 +40,5 @@ export class LoginComponent {
         });
       }
     });
-    
   }
 }
